@@ -106,7 +106,39 @@ vector:struct constant string:struct
   acc
 ;
 
+: string:some ( string xt -- t )
+  { string xt }
 
+  false { some? }
+
+  string string:length @ 0 ?do
+    string string:data @ i + c@ { c }
+    c xt execute if
+      true to some?
+      leave
+    then
+  loop
+
+  some?
+;
+
+: string:every ( string xt -- t )
+  { string xt }
+
+  true { every? }
+
+  string string:length @ 0 ?do
+    string string:data @ i + c@ { c }
+    c xt execute invert if
+      false to every?
+      leave
+    then
+  loop
+
+  every?
+;
+
+\ Append string2 to string1 and return string3
 : string:append ( string1 string2 -- string3 )
   { string1 string2 }
 
@@ -127,4 +159,118 @@ vector:struct constant string:struct
   cmove
 
   string3
+;
+
+\ Compare string1 with string2 and return boolean
+: string:compare ( string1 string2 -- t )
+  { string1 string2 }
+
+  true { equal? }
+
+  string1 string:length @
+  string2 string:length @ <> if false exit then
+
+  string1 string:length @ 0 ?do
+    string1 i string:nth
+    string2 i string:nth <> if false to equal? then
+  loop
+
+  equal?
+;
+
+: string:from-char ( c -- string )
+  { c }
+
+  s"  " string:make { string }
+
+  c string string:data @ c!
+
+  string
+;
+
+\ FIXME
+\ Exctract string2 from string1 with offsets [a,b)
+: string:substring ( string1 a b -- string2 )
+  { string1 a b }
+
+  \ FIXME: handle reverse indices
+  b a < if ." Not implemented" abort then
+
+  b a - 1-                   { length }
+  length 1 chars vector:make { string2 }
+
+  length 0 ?do
+    i a + string1 string:length @ = if leave then
+
+    string1 i a + string:nth { c }
+
+    c string2 string:caddr i + c!
+  loop
+
+  string2
+;
+
+\ Return the index of string2 within string1 otherwise -1
+: string:index-of ( string1 string2 -- b )
+  { string1 string2 }
+
+  -1 { index }
+
+  string1 string:raw
+  string2 string:raw
+  search { c-addr3 u found }
+
+  found if
+    c-addr3 string1 string:caddr - to index
+  then
+
+  index
+;
+
+\ Replace string2 in string1 with string3 and return string4
+: string:replace ( string1 string2 string3 -- string4 )
+  { string1 string2 string3 }
+
+  string1 string:length @
+  string2 string:length @
+  min { length }
+
+  string1 string2 string:index-of { index }
+
+  index -1 = if
+    string1 exit
+  then
+
+  string1 string:caddr index string:make { first }
+
+  first string3 string:append { string4 }
+
+  string1 string:caddr index + length +
+  length index length - 1- -
+  string:make { remaining }
+
+  string4 remaining string:append to string4
+
+  string4
+;
+
+\ Returns true if string1 ends with string2
+: string:ends-with ( string1 string2 -- t )
+  { string1 string2 }
+
+  string1 string:length @
+  string2 string:length @
+  < if false exit then
+
+  string1 string:length @
+  string2 string:length @
+  - { offset }
+
+  string1 string:caddr offset + { string3-caddr }
+
+  string3-caddr string2 string:length @
+  string2 string:raw
+  compare 0= if true exit then
+
+  false
 ;

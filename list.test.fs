@@ -42,6 +42,7 @@ require list.fs
 
   [: ." list:for-each: " . cr ;] list2 list:for-each
 
+  list1 [: 3 = ;] list:some .
 ;
 
 

@@ -146,3 +146,25 @@ end-structure
 
   acc
 ;
+
+: list:some ( list xt -- t )
+  { list xt }
+
+  false { some? }
+
+  list list:tail @ { iter }
+
+  begin
+    iter list:node:nend?
+  while
+    iter list:node:data @ xt execute { result }
+
+    \ FIXME, exit early
+    result if
+      true to some?
+    then
+
+    iter list:node:next @ to iter
+  repeat
+  some?
+;
