@@ -9,25 +9,21 @@
 \ 104  |  0    |  1337 | <- head  1337 list:append 104
 \      +-------+-------+
 
-0 \ list:node:struct
-dup constant list:node->next 1 cells +
-dup constant list:node->data 1 cells +
-constant list:node:struct
+begin-structure list:node:struct
+  field: list:node:next
+  field: list:node:data
+end-structure
 
-: list:node:next      list:node->next + ;
-: list:node:data      list:node->data + ;
 : list:node:next@     list:node:next @ ;
 : list:node:data@     list:node:data @ ;
 : list:node:end?      list:node:next 0= ;
 : list:node:nend?     list:node:end? invert ;
 
-0 \ list:struct
-dup constant list->tail 1 cells +
-dup constant list->head 1 cells +
-constant list:struct
+begin-structure list:struct
+  field: list:tail
+  field: list:head
+end-structure
 
-: list:tail    list->tail + ;
-: list:head    list->head + ;
 : list:tail@   list:tail @ ;
 : list:head@   list:head @ ;
 
