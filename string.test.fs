@@ -22,13 +22,18 @@ require list.fs
 
   cr ." char at index 4 is: " s" Hello, world" string:make 4 string:nth emit
 
-  cr ." string chars 123 reduced to: "
+  cr ." concat two strings: "
+  s" foo" string:make s" bar" string:make string:append string:print
 
+  cr ." string chars 123 reduced to: "
   42 \ pass to xt
     s" 123" string:make
     0
     [: { foobar acc char } foobar foobar ;]
     string:reduce .
+
+
+  
 ;
 
 run-test-0

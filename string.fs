@@ -10,6 +10,15 @@ vector:struct constant string:struct
 : string:data@      vector:data@ ;
 : string:length@    vector:length@ ;
 
+: string:raw ( string -- caddr u )
+  { string }
+
+  string string:data@
+  string string:length@
+;
+
+: string:caddr string:raw drop ;
+
 \ make a string from the string at caddr with u length returning a
 \ string
 : string:make ( caddr u -- string )
@@ -34,13 +43,6 @@ vector:struct constant string:struct
   0 0 caddr len >number { ud0 ud1 u1 u2 }
 
   ud0 ud1
-;
-
-: string:raw ( string -- caddr u )
-  { string }
-
-  string string:data@
-  string string:length@
 ;
 
 \ print string
@@ -104,4 +106,27 @@ vector:struct constant string:struct
   loop
 
   acc
+;
+
+
+: string:append ( string1 string2 -- string3 )
+  { string1 string2 }
+
+  string1 string:length@
+  string2 string:length@ + { u }
+
+  u 1 chars vector:make { string3 }
+
+  string1 string:caddr
+    string3 string:caddr
+    string1 string:length@
+  cmove
+
+  string2 string:caddr
+    string3 string:caddr
+      string1 string:length@ +
+    string2 string:length@
+  cmove
+
+  string3
 ;
