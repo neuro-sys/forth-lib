@@ -5,8 +5,8 @@ require list.fs
   { string }
 
   cr ." string = " string hex. ." { "
-  cr ."  data: " string string:data@ hex.
-  cr ."  length: " string string:length@ .
+  cr ."  data: " string string:data @ hex.
+  cr ."  length: " string string:length @ .
   cr ." }"
 ;
 

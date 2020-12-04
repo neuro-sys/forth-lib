@@ -4,8 +4,8 @@ require list.fs
   { node }
 
   ." node = " node hex. ." { "
-  ." next: " node list:node:next@ hex. ." , "
-  ." data: " node list:node:data@ .
+  ." next: " node list:node:next @ hex. ." , "
+  ." data: " node list:node:data @ .
   ." }"
 ;
 
@@ -13,8 +13,8 @@ require list.fs
   { list }
 
   cr ." list = " list hex. ." {"
-  cr ."   tail: " list list:tail@ dup 0<> if list:node:print else ." NULL " then
-  cr ."   head: " list list:head@ dup 0<> if list:node:print else ." NULL " then
+  cr ."   tail: " list list:tail @ dup 0<> if list:node:print else ." NULL " then
+  cr ."   head: " list list:head @ dup 0<> if list:node:print else ." NULL " then
   cr ." } "
 ;
 

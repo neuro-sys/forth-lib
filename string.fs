@@ -7,14 +7,12 @@ vector:struct constant string:struct
 : string:erase      vector:erase ;
 : string:data       vector:data ;
 : string:length     vector:length ;
-: string:data@      vector:data@ ;
-: string:length@    vector:length@ ;
 
 : string:raw ( string -- caddr u )
   { string }
 
-  string string:data@
-  string string:length@
+  string string:data @
+  string string:length @
 ;
 
 : string:caddr string:raw drop ;
@@ -27,7 +25,7 @@ vector:struct constant string:struct
   u 1 chars vector:make { string }
 
   caddr
-    string string:data@
+    string string:data @
     u
   cmove
 
@@ -37,8 +35,8 @@ vector:struct constant string:struct
 : string:to-number ( string -- u )
   { string }
 
-  string string:data@ { caddr }
-  string string:length@ { len }
+  string string:data @ { caddr }
+  string string:length @ { len }
 
   0 0 caddr len >number { ud0 ud1 u1 u2 }
 
@@ -49,8 +47,8 @@ vector:struct constant string:struct
 : string:print ( string -- )
   { string }
 
-  string string:data@
-  string string:length@
+  string string:data @
+  string string:length @
   type
 ;
 
@@ -58,8 +56,8 @@ vector:struct constant string:struct
 : string:tokenize ( d string -- tokens )
   { d string }
 
-  string string:data@   { caddr }
-  string string:data@   { prev-caddr }
+  string string:data @   { caddr }
+  string string:data @   { prev-caddr }
   list:make             { tokens }
   0                     { k }
 
@@ -67,7 +65,7 @@ vector:struct constant string:struct
   \ denoting the last caddr and current index k. Also set k to i and
   \ set prev caddr to _caddr.
 
-  string string:length@ 0 ?do
+  string string:length @ 0 ?do
     caddr c@ d = if
       tokens
         prev-caddr k string:make
@@ -92,7 +90,7 @@ vector:struct constant string:struct
 : string:nth ( string n -- c )
   { string n }
 
-  string string:data@ n + c@
+  string string:data @ n + c@
 ;
 
 \ Apply func xt on every element accumulating result in acc
@@ -100,8 +98,8 @@ vector:struct constant string:struct
 : string:reduce ( string acc xt -- acc )
   { string acc xt }
 
-  string string:length@ 0 ?do
-    string string:data@ i + c@ { c }
+  string string:length @ 0 ?do
+    string string:data @ i + c@ { c }
     acc c xt execute to acc
   loop
 
@@ -112,20 +110,20 @@ vector:struct constant string:struct
 : string:append ( string1 string2 -- string3 )
   { string1 string2 }
 
-  string1 string:length@
-  string2 string:length@ + { u }
+  string1 string:length @
+  string2 string:length @ + { u }
 
   u 1 chars vector:make { string3 }
 
   string1 string:caddr
     string3 string:caddr
-    string1 string:length@
+    string1 string:length @
   cmove
 
   string2 string:caddr
     string3 string:caddr
-      string1 string:length@ +
-    string2 string:length@
+      string1 string:length @ +
+    string2 string:length @
   cmove
 
   string3

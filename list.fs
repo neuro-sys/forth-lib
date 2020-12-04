@@ -14,8 +14,6 @@ begin-structure list:node:struct
   field: list:node:data
 end-structure
 
-: list:node:next@     list:node:next @ ;
-: list:node:data@     list:node:data @ ;
 : list:node:end?      list:node:next 0= ;
 : list:node:nend?     list:node:end? invert ;
 
@@ -23,9 +21,6 @@ begin-structure list:struct
   field: list:tail
   field: list:head
 end-structure
-
-: list:tail@   list:tail @ ;
-: list:head@   list:head @ ;
 
 \ allocate new list object
 : list:make ( -- list )
@@ -56,12 +51,12 @@ end-structure
 
   data node list:node:data !
 
-  list list:tail@ 0= if
+  list list:tail @ 0= if
     node list list:tail !
   then
 
-  list list:head@ 0<> if
-    node list list:head@ list:node:next !
+  list list:head @ 0<> if
+    node list list:head @ list:node:next !
   then
 
   node list list:head !
@@ -72,13 +67,13 @@ end-structure
 \ execute xt on every element of list
 : list:for-each ( xt list -- )
   { xt list }
-  list list:tail@ { iter }
+  list list:tail @ { iter }
 
   begin
     iter list:node:nend?
   while
-    iter list:node:data@ xt execute
-    iter list:node:next@ to iter
+    iter list:node:data @ xt execute
+    iter list:node:next @ to iter
   repeat
 ;
 
@@ -87,15 +82,15 @@ end-structure
 : list:map ( list1 xt -- list2 )
   { list1 xt }
 
-  list1 list:tail@ { iter }
+  list1 list:tail @ { iter }
   list:make { list2 }
 
   begin
     iter list:node:nend?
   while
-    iter list:node:data@ xt execute { result }
+    iter list:node:data @ xt execute { result }
     list2 result list:append drop
-    iter list:node:next@ to iter
+    iter list:node:next @ to iter
   repeat
 
   list2
@@ -106,13 +101,13 @@ end-structure
 
   0 { n }
 
-  list list:tail@ { iter }
+  list list:tail @ { iter }
 
   begin
     iter list:node:nend?
   while
     n 1+ to n
-    iter list:node:next@ to iter
+    iter list:node:next @ to iter
   repeat
 
   n
@@ -123,16 +118,16 @@ end-structure
   { list n }
   0 { k }
 
-  list list:tail@ { iter }
+  list list:tail @ { iter }
 
   begin
     k n <>
   while
-    iter list:node:next@ to iter
+    iter list:node:next @ to iter
     k 1+ to k
   repeat
 
-  iter list:node:data@
+  iter list:node:data @
 ;
 
 \ Apply func xt on every element accumulating result in acc
@@ -140,13 +135,13 @@ end-structure
 : list:reduce ( list acc xt -- acc )
   { list acc xt }
 
-  list list:tail@ { iter }
+  list list:tail @ { iter }
 
   begin
     iter list:node:nend?
   while
-    acc iter list:node:data@ xt execute to acc
-    iter list:node:next@ to iter
+    acc iter list:node:data @ xt execute to acc
+    iter list:node:next @ to iter
   repeat
 
   acc

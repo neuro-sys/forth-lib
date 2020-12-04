@@ -5,8 +5,8 @@ require vector.fs
 : vector-debug ( vector -- )
   { vector }
   ." vector = " vector hex. ." {"                cr
-  ."   length: "      vector vector:length@    . cr
-  ."   data: "        vector vector:data@   hex. cr
+  ."   length: "      vector vector:length @    . cr
+  ."   data: "        vector vector:data @   hex. cr
   ." }" cr
 ;
 

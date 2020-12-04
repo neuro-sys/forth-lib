@@ -5,9 +5,6 @@ begin-structure vector:struct
 end-structure
 
 : vector:allocate  vector:struct allocate throw ;
-: vector:length@   vector:length @ ;
-: vector:data@     vector:data @ ;
-: vector:stride@   vector:stride @ ;
 : vector:erase     vector:struct erase ;
 
 : vector:make ( size stride -- addr ) \ initial size
