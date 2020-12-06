@@ -10,11 +10,11 @@ end-structure
 : vector:make ( size stride -- addr ) \ initial size
   { size stride }
 
-  here
+  vector:allocate { vector }
 
-  size ,       \ store size at length
-  1 allot      \ reserve data cell
-  stride ,     \ store stride at stride
+  size vector vector:length !
 
-  stride size * allocate throw over vector:data !
+  stride size * allocate throw vector vector:data !
+
+  vector
 ;
