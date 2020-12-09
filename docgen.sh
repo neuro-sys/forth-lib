@@ -19,4 +19,4 @@ echo "# \`string.fs\`" >> README.md
 
 gforth -e "s\" string.fs\"" docgen.fs >> README.md
 
-sed -i -E "s/(\(.*?\))/\`\1\`/g" README.md
+sed -i -E "s/(\([^)]*\))/\`\1\`/" README.md
