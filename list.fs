@@ -1,14 +1,3 @@
-\ linked list
-\
-\        next     data
-\      +-------+-------+
-\ 100  |  102  |  42   |          0 42 list:append 100
-\      +-------+-------+
-\ 102  |  104  |  666  |           666 list:append 102
-\      +-------+-------+
-\ 104  |  0    |  1337 | <- head  1337 list:append 104
-\      +-------+-------+
-
 begin-structure list:node:struct
   field: list:node:next
   field: list:node:data
@@ -22,8 +11,8 @@ begin-structure list:struct
   field: list:head
 end-structure
 
-\ allot new list object
-: list:make ( -- list )
+\ ( -- list ) allot new list object
+: list:make
   here { list }
 
   list:struct allot
@@ -33,8 +22,8 @@ end-structure
   list
 ;
 
-\ allot new node and set data to u
-: list:node:make ( data -- node )
+\ ( data -- node ) allot new node and set data to u
+: list:node:make
   { data }
 
   here { node }
@@ -47,8 +36,8 @@ end-structure
   node
 ;
 
-\ allot new node with data and append to list return list
-: list:append ( list data -- list )
+\ ( list data -- list ) allot new node with data and append to list return list
+: list:append
   { list data }
 
   data list:node:make { node }
@@ -68,8 +57,8 @@ end-structure
   list
 ;
 
-\ execute xt on every element of list
-: list:for-each ( xt list -- )
+\ ( xt list -- ) execute xt on every element of list
+: list:for-each
   { xt list }
   list list:tail @ { iter }
 
@@ -81,9 +70,8 @@ end-structure
   repeat
 ;
 
-\ execute xt on every element of list1 and create a new list2 and
-\ return
-: list:map ( list1 xt -- list2 )
+\ ( list1 xt -- list2 ) execute xt on every element of list1 and create a new list2 and return
+: list:map
   { list1 xt }
 
   list1 list:tail @ { iter }
@@ -100,7 +88,8 @@ end-structure
   list2
 ;
 
-: list:length ( list -- n )
+\ ( list -- n ) return list length
+: list:length
   { list }
 
   0 { n }
@@ -117,8 +106,8 @@ end-structure
   n
 ;
 
-\ return the nth data from list
-: list:nth ( list n -- data )
+\ ( list n -- data ) return the nth data from list
+: list:nth
   { list n }
   0 { k }
 
@@ -134,9 +123,8 @@ end-structure
   iter list:node:data @
 ;
 
-\ Apply func xt on every element accumulating result in acc
-\ xt is called with ( acc element -- acc )
-: list:reduce ( list acc xt -- acc )
+\ ( list acc xt -- acc ) apply func xt on every element accumulating result in acc. xt is called with ( acc element -- acc )
+: list:reduce
   { list acc xt }
 
   list list:tail @ { iter }
@@ -151,7 +139,8 @@ end-structure
   acc
 ;
 
-: list:some ( list xt -- t )
+\ ( list xt -- t ) execute xt on every node and return true if at least one returns true. xt is called with ( element -- t )
+: list:some
   { list xt }
 
   false { some? }
