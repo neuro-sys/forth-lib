@@ -1,4 +1,6 @@
 # forth-libs
+
+Current revision: 769ea3a4ddd10878b9717117a64afa8813d5b469
 # `list.fs`
 ## `list:make`
 ( -- list ) allot new list object

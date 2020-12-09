@@ -1,0 +1,7 @@
+#!/bin/bash
+
+gforth vector.test.ts
+gforth list.test.ts
+gforth string.test.ts
+
+./docgen.sh
