@@ -1,128 +1,128 @@
+marker ---marker---
+
 require string.fs
 require list.fs
 
-\ Returns true if a is between [b,c]
 : between ( a b c -- t )
   { a b c }
 
   a b >=
-  a c <= and
-;
+  a c <= and ;
 
-: string:debug:print ( string -- )
-  { string }
+: must-equal <> if abort" " else ." OK" then cr ;
 
-  cr ." string = " string hex. ." { "
-  cr ."  data: " string string:data @ hex.
-  cr ."  length: " string string:length @ .
-  cr ." }"
-;
+: run-test
+  ." string:print -> "
+  s" Hello, world! " string:make string:print ." OK?" cr
 
-: run-test-0
-     ." string:make, string:print"
-  cr s" Hello, world!" string:make string:print
-  cr s" 123" string:make string:to-number drop .
+  ." string:to-number -> "
+  s" 123" string:make string:to-number drop 123 must-equal
 
-  cr ." string:tokenize, string:for-each"
+  ." string:tokenize -> "
   s" A,BC,DEF,GHIJ" string:make { str }
-  [char] , str string:tokenize
-  [: cr ." Token:" string:print ;] swap list:for-each
+  [char] , str string:tokenize { tokens }
+  tokens list:length 4 must-equal
 
-  cr ." char at index 4 is: " s" Hello, world" string:make 4 string:nth emit
+  ." string:for-each -> "
+  tokens [: ." Token: " string:print space ;] swap list:for-each ." OK?" cr
 
-  cr ." concat two strings: "
-  s" foo" string:make s" bar" string:make string:append string:print
+  ." string:nth -> "
+  s" Hello, world" string:make 4 string:nth [char] o must-equal
 
-  cr ." string:compare: "
+  ." string:compare -> "
   s" foo" string:make
   s" bar" string:make
-  string:compare .
+  string:compare false must-equal
 
-  cr ." string:compare: "
+  ." string:compare -> "
   s" foo" string:make
   s" barz" string:make
-  string:compare .
+  string:compare false must-equal
 
-  cr ." string:compare: "
+  ." string:compare -> "
   s" foo" string:make
   s" foo" string:make
-  string:compare .
+  string:compare true must-equal
 
-  cr ." string:from-char: "
-  [char] x string:from-char string:print
+  ." string:append -> "
+  s" foo" string:make s" bar" string:make string:append s" foobar" string:make string:compare true must-equal
 
-  cr ." foobar 2 6 string:substring -> "
-  s" foobar" string:make 2 6 string:substring string:print
+  ." string:from-char -> "
+  [char] x string:from-char s" x" string:make string:compare true must-equal
 
-  cr ." foobar 2 6 string:substring -> "
-  s" xxxddddddddddddddd" string:make 2 6 string:substring string:print
+  ." string:substring -> "
+  s" foobar" string:make 2 6 string:substring s" oba" string:make string:compare true must-equal
 
-  cr ." foobar bar string:index-of -> "
+  ." string:substring -> "
+  s" xxxddddddddddddddd" string:make 2 6 string:substring s" xdd" string:make string:compare true must-equal
+
+  ." string:index-of -> "
   s" foobar" string:make
   s" bar" string:make
-  string:index-of .
+  string:index-of 3 must-equal
 
-  cr ." foobar bar string:index-of -> "
+  ." string:index-of -> "
   s" foobar" string:make
   s" xxx" string:make
-  string:index-of .
+  string:index-of -1 must-equal
 
-  cr ." foobarbuzz bar xxx string:replace -> "
+  ." string:replace -> "
   s" foobarbuzz" string:make
   s" bar" string:make
   s" xxx" string:make
-  string:replace string:print
+  string:replace
+  s" fooxxxbuzz" string:make string:compare true must-equal
 
-  cr ." foobarbuzz bar xxx string:replace -> "
+  ." string:replace -> "
   s" foobarbuzz" string:make
   s" 123" string:make
   s" xxx" string:make
-  string:replace string:print
+  string:replace
+  s" foobarbuzz" string:make string:compare true must-equal
 
-  cr ." fooxbar [: [char] x = ;] string:some -> "
+  ." string:some -> "
   s" fooxbar" string:make
   [: [char] x = ;]
-  string:some .
+  string:some true must-equal
 
-  cr ." fooxbar [: [char] x = ;] string:some -> "
+  ." string:some -> "
   s" fooxbar" string:make
   [: [char] y = ;]
-  string:some .
+  string:some false must-equal
 
-  cr ." 0123456789 [: [char] 0 [char] 9 between ;] string:every -> "
+  ." string:every -> "
   s" 0123456789" string:make
   [: [char] 0 [char] 9 between ;]
-  string:every .
+  string:every true must-equal
 
-  cr ." 0123456789a [: [char] 0 [char] 9 between ;] string:every -> "
+  ." string:every -> "
   s" 0123456789a" string:make
   [: [char] 0 [char] 9 between ;]
-  string:every .
+  string:every false must-equal
 
-  cr ." 158cm cm string:ends-with -> "
+  ." string:ends-with -> "
   s" 158cm" string:make
   s" cm" string:make
-  string:ends-with .
+  string:ends-with true must-equal
 
-  cr ." foobar bar string:ends-with -> "
+  ." string:ends-with -> "
   s" foobar" string:make
   s" bar" string:make
-  string:ends-with .
+  string:ends-with true must-equal
 
-  cr ." foobar ba string:ends-with -> "
+  ." string:ends-with -> "
   s" foobar" string:make
   s" ba" string:make
-  string:ends-with .
+  string:ends-with false must-equal
 
-  \ cr ." string chars 123 reduced to: "
-  \ 42 \ pass to xt
-  \   s" 123" string:make
-  \   0
-  \   [: { foobar acc char } foobar foobar ;]
-  \   string:reduce .
-
+  ." string:reduce -> "
+  s" 123" string:make
+  0
+  [: { acc char1 } char1 [char] 0 - acc + ;]
+  string:reduce 6 must-equal
 ;
 
-run-test-0
+run-test
 
+---marker---
 bye
