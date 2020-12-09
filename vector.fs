@@ -4,17 +4,23 @@ begin-structure vector:struct
   field: vector:stride
 end-structure
 
-: vector:allocate  vector:struct allocate throw ;
 : vector:erase     vector:struct erase ;
 
 : vector:make ( size stride -- addr ) \ initial size
   { size stride }
 
-  vector:allocate { vector }
+  here { vector }
+
+  vector:struct allot
 
   size vector vector:length !
+  stride vector vector:stride !
 
-  stride size * allocate throw vector vector:data !
+  here { data }
+
+  stride size * allot
+
+  data vector vector:data !
 
   vector
 ;

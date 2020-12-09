@@ -22,20 +22,24 @@ begin-structure list:struct
   field: list:head
 end-structure
 
-\ allocate new list object
+\ allot new list object
 : list:make ( -- list )
-  list:struct allocate throw { list }
+  here { list }
+
+  list:struct allot
 
   list list:struct erase
 
   list
 ;
 
-\ allocate new node and set data to u
+\ allot new node and set data to u
 : list:node:make ( data -- node )
   { data }
 
-  list:node:struct allocate throw { node }
+  here { node }
+
+  list:node:struct allot
 
   node list:node:struct erase
   data node list:node:data !
@@ -43,7 +47,7 @@ end-structure
   node
 ;
 
-\ allocate new node with data and append to list return list
+\ allot new node with data and append to list return list
 : list:append ( list data -- list )
   { list data }
 
