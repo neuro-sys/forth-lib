@@ -1,24 +1,10 @@
+marker ---marker---
+
 require list.fs
 
-: list:node:print ( node -- )
-  { node }
+: must-equal <> if abort" " else ." OK " then ;
 
-  ." node = " node hex. ." { "
-  ." next: " node list:node:next @ hex. ." , "
-  ." data: " node list:node:data @ .
-  ." }"
-;
-
-: list:print ( list -- )
-  { list }
-
-  cr ." list = " list hex. ." {"
-  cr ."   tail: " list list:tail @ dup 0<> if list:node:print else ." NULL " then
-  cr ."   head: " list list:head @ dup 0<> if list:node:print else ." NULL " then
-  cr ." } "
-;
-
-: run-test-0
+: run-test
   list:make { list1 }
 
   list1 1 list:append to list1
@@ -28,24 +14,33 @@ require list.fs
   list1 5 list:append to list1
   list1 6 list:append to list1
 
-  [: ." list:for-each: " . cr ;] list1 list:for-each
+  ." list:for-each -> "
+  [: . space ;] list1 list:for-each ." OK?" cr
 
-  ." element at 2nd index: " list1 2 list:nth .
+  ." list:nth -> "
+  list1 2 list:nth 3 must-equal cr
 
-  cr ." List reduced to Factorial: " list1 1 [: * ;] list:reduce .
+  ." list:reduce -> "
+  list1 1 [: * ;] list:reduce 720 must-equal cr
 
-  cr ." Number of elements in list: " list1 list:length .
+  ." list:length -> "
+  list1 list:length 6 must-equal cr
 
+  ." list:map -> "
   list1 [: 2 * ;] list:map { list2 }
+  list2 list:length list1 list:length must-equal
+  list2 0 list:nth list1 0 list:nth 2 * must-equal
+  list2 1 list:nth list1 1 list:nth 2 * must-equal
+  list2 2 list:nth list1 2 list:nth 2 * must-equal
+  list2 3 list:nth list1 3 list:nth 2 * must-equal cr
 
-  cr ." Mapped list:" cr
-
-  [: ." list:for-each: " . cr ;] list2 list:for-each
-
-  list1 [: 3 = ;] list:some .
+  ." list:some -> "
+  list1 [: 3 = ;] list:some true must-equal cr
 ;
 
 
-run-test-0
+run-test
+
+---marker---
 
 bye

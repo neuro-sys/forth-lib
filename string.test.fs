@@ -9,117 +9,117 @@ require list.fs
   a b >=
   a c <= and ;
 
-: must-equal <> if abort" " else ." OK" then cr ;
+: must-equal <> if abort" " else ." OK" then ;
 
 : run-test
   ." string:print -> "
   s" Hello, world! " string:make string:print ." OK?" cr
 
   ." string:to-number -> "
-  s" 123" string:make string:to-number drop 123 must-equal
+  s" 123" string:make string:to-number drop 123 must-equal cr
 
   ." string:tokenize -> "
   s" A,BC,DEF,GHIJ" string:make { str }
   [char] , str string:tokenize { tokens }
-  tokens list:length 4 must-equal
+  tokens list:length 4 must-equal cr
 
   ." string:for-each -> "
   tokens [: ." Token: " string:print space ;] swap list:for-each ." OK?" cr
 
   ." string:nth -> "
-  s" Hello, world" string:make 4 string:nth [char] o must-equal
+  s" Hello, world" string:make 4 string:nth [char] o must-equal cr
 
   ." string:compare -> "
   s" foo" string:make
   s" bar" string:make
-  string:compare false must-equal
+  string:compare false must-equal cr
 
   ." string:compare -> "
   s" foo" string:make
   s" barz" string:make
-  string:compare false must-equal
+  string:compare false must-equal cr
 
   ." string:compare -> "
   s" foo" string:make
   s" foo" string:make
-  string:compare true must-equal
+  string:compare true must-equal cr
 
   ." string:append -> "
-  s" foo" string:make s" bar" string:make string:append s" foobar" string:make string:compare true must-equal
+  s" foo" string:make s" bar" string:make string:append s" foobar" string:make string:compare true must-equal cr
 
   ." string:from-char -> "
-  [char] x string:from-char s" x" string:make string:compare true must-equal
+  [char] x string:from-char s" x" string:make string:compare true must-equal cr
 
   ." string:substring -> "
-  s" foobar" string:make 2 6 string:substring s" oba" string:make string:compare true must-equal
+  s" foobar" string:make 2 6 string:substring s" oba" string:make string:compare true must-equal cr
 
   ." string:substring -> "
-  s" xxxddddddddddddddd" string:make 2 6 string:substring s" xdd" string:make string:compare true must-equal
+  s" xxxddddddddddddddd" string:make 2 6 string:substring s" xdd" string:make string:compare true must-equal cr
 
   ." string:index-of -> "
   s" foobar" string:make
   s" bar" string:make
-  string:index-of 3 must-equal
+  string:index-of 3 must-equal cr
 
   ." string:index-of -> "
   s" foobar" string:make
   s" xxx" string:make
-  string:index-of -1 must-equal
+  string:index-of -1 must-equal cr
 
   ." string:replace -> "
   s" foobarbuzz" string:make
   s" bar" string:make
   s" xxx" string:make
   string:replace
-  s" fooxxxbuzz" string:make string:compare true must-equal
+  s" fooxxxbuzz" string:make string:compare true must-equal cr
 
   ." string:replace -> "
   s" foobarbuzz" string:make
   s" 123" string:make
   s" xxx" string:make
   string:replace
-  s" foobarbuzz" string:make string:compare true must-equal
+  s" foobarbuzz" string:make string:compare true must-equal cr
 
   ." string:some -> "
   s" fooxbar" string:make
   [: [char] x = ;]
-  string:some true must-equal
+  string:some true must-equal cr
 
   ." string:some -> "
   s" fooxbar" string:make
   [: [char] y = ;]
-  string:some false must-equal
+  string:some false must-equal cr
 
   ." string:every -> "
   s" 0123456789" string:make
   [: [char] 0 [char] 9 between ;]
-  string:every true must-equal
+  string:every true must-equal cr
 
   ." string:every -> "
   s" 0123456789a" string:make
   [: [char] 0 [char] 9 between ;]
-  string:every false must-equal
+  string:every false must-equal cr
 
   ." string:ends-with -> "
   s" 158cm" string:make
   s" cm" string:make
-  string:ends-with true must-equal
+  string:ends-with true must-equal cr
 
   ." string:ends-with -> "
   s" foobar" string:make
   s" bar" string:make
-  string:ends-with true must-equal
+  string:ends-with true must-equal cr
 
   ." string:ends-with -> "
   s" foobar" string:make
   s" ba" string:make
-  string:ends-with false must-equal
+  string:ends-with false must-equal cr
 
   ." string:reduce -> "
   s" 123" string:make
   0
   [: { acc char1 } char1 [char] 0 - acc + ;]
-  string:reduce 6 must-equal
+  string:reduce 6 must-equal cr
 ;
 
 run-test
