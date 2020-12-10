@@ -19,10 +19,10 @@ vector:struct constant string:struct
 : string:caddr ( string -- caddr ) string:raw drop ;
 
 \ make a string from the string at counted string
-: string:make ( caddr u -- string )
+: string:create ( caddr u -- string )
   { caddr u }
 
-  u 1 chars vector:make { string }
+  u 1 chars vector:create { string }
 
   caddr
     string string:data @
@@ -59,7 +59,7 @@ vector:struct constant string:struct
 
   string string:data @   { caddr }
   string string:data @   { prev-caddr }
-  list:make             { tokens }
+  list:create             { tokens }
   0                     { k }
 
   \ When current character equals the delimiter, push a string
@@ -69,7 +69,7 @@ vector:struct constant string:struct
   string string:length @ 0 ?do
     caddr c@ d = if
       tokens
-        prev-caddr k string:make
+        prev-caddr k string:create
       list:append to tokens
 
       caddr 1+ to prev-caddr
@@ -81,7 +81,7 @@ vector:struct constant string:struct
   loop
 
   tokens
-    prev-caddr k string:make
+    prev-caddr k string:create
   list:append to tokens
 
   tokens
@@ -147,7 +147,7 @@ vector:struct constant string:struct
   string1 string:length @
   string2 string:length @ + { u }
 
-  u 1 chars vector:make { string3 }
+  u 1 chars vector:create { string3 }
 
   string1 string:caddr
     string3 string:caddr
@@ -184,7 +184,7 @@ vector:struct constant string:struct
 : string:from-char ( c -- string )
   { c }
 
-  s"  " string:make { string }
+  s"  " string:create { string }
 
   c string string:data @ c!
 
@@ -199,7 +199,7 @@ vector:struct constant string:struct
   b a < if ." Not implemented" abort then
 
   b a - 1-                   { length }
-  length 1 chars vector:make { string2 }
+  length 1 chars vector:create { string2 }
 
   length 0 ?do
     i a + string1 string:length @ = if leave then
@@ -243,13 +243,13 @@ vector:struct constant string:struct
     string1 exit
   then
 
-  string1 string:caddr index string:make { first }
+  string1 string:caddr index string:create { first }
 
   first string3 string:append { string4 }
 
   string1 string:caddr index + length +
   length index length - 1- -
-  string:make { remaining }
+  string:create { remaining }
 
   string4 remaining string:append to string4
 

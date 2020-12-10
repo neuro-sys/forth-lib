@@ -6,7 +6,7 @@ end-structure
 
 : vector:erase     vector:struct erase ;
 
-: vector:make ( size stride -- addr ) \ initial size
+: vector:create ( size stride -- addr ) \ initial size
   { size stride }
 
   here { vector }

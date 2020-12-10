@@ -12,7 +12,7 @@ begin-structure list:struct
 end-structure
 
 \ allot new list object
-: list:make ( -- list )
+: list:create ( -- list )
   here { list }
 
   list:struct allot
@@ -23,7 +23,7 @@ end-structure
 ;
 
 \ allot new node and set data to u
-: list:node:make ( data -- node )
+: list:node:create ( data -- node )
   { data }
 
   here { node }
@@ -40,7 +40,7 @@ end-structure
 : list:append ( list data -- list )
   { list data }
 
-  data list:node:make { node }
+  data list:node:create { node }
 
   data node list:node:data !
 
@@ -75,7 +75,7 @@ end-structure
   { list1 xt }
 
   list1 list:tail @ { iter }
-  list:make { list2 }
+  list:create { list2 }
 
   begin
     iter list:node:nend?

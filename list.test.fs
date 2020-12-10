@@ -5,7 +5,7 @@ require list.fs
 : must-equal <> if abort" " else ." OK " then ;
 
 : run-test
-  list:make { list1 }
+  list:create { list1 }
 
   list1 1 list:append to list1
   list1 2 list:append to list1

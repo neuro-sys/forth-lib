@@ -23,7 +23,7 @@ variable #src
 : load-file  open start read finish close ;
 
 \ returns a string marking the beginning of a docgen item; newline followed by a "\" character.
-: docgen-marker s\" \n\\ " string:make ;
+: docgen-marker s\" \n\\ " string:create ;
 
 : doc-allot here doc:struct allot ;
 
@@ -81,7 +81,7 @@ variable #src
   index 1 + to index
 
   \ if not "(" then exit early
-  src index string:nth 40 <> if src index s" " string:make exit then
+  src index string:nth 40 <> if src index s" " string:create exit then
 
   src index src string:length @ string:substring to src
 
@@ -121,9 +121,9 @@ variable #src
 : docgen
   load-file
 
-  'src @ #src @ string:make { src }
+  'src @ #src @ string:create { src }
 
-  list:make { word-list }
+  list:create { word-list }
 
   src word-list parse-words
 

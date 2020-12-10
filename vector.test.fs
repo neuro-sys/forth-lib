@@ -10,6 +10,6 @@ require vector.fs
   ." }" cr
 ;
 
-42 1 chars vector:make vector-debug
+42 1 chars vector:create vector-debug
 
 bye
