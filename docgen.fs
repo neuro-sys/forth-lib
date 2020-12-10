@@ -8,6 +8,7 @@ require list.fs
 begin-structure doc:struct
   field: doc:word
   field: doc:comment
+  field: doc:stack-effect
 end-structure
 
 variable 'fd
@@ -21,22 +22,109 @@ variable #src
 : finish     here 'src @ - #src ! ;
 : load-file  open start read finish close ;
 
+\ returns a string marking the beginning of a docgen item; newline followed by a "\" character.
 : docgen-marker s\" \n\\ " string:make ;
 
-: doc-make   here doc:struct allot ;
+: doc-make
+  { word-name comment stack-effect }
 
-\ ( doc -- )
-: doc-render-item
-  ." ## `" dup doc:word @ string:print ." `" cr
+  here doc:struct allot { doc }
 
-  \ ." ```" cr
-  doc:comment @ string:print cr cr
-  \ ." ```" cr
+  word-name doc doc:word !
+  comment doc doc:comment !
+  stack-effect doc doc:stack-effect !
+
+  doc
 ;
 
-\ ( word-list -- ) 
+\ Takes a doc:struct and prints it in markdown
+: doc-render-item ( doc -- )
+  ." ## `" dup doc:word @ string:print space
+           dup doc:stack-effect @ string:print ." `" cr
+
+  doc:comment @ string:print cr cr
+;
+
+: find-docgen-marker ( src -- index )
+  { src }
+  src docgen-marker string:index-of
+;
+
+: parse-comment
+  { src index }
+
+  src index src string:length @ string:substring to src
+
+  \ find index of char after newline
+  src 10 string:from-char string:index-of 1+ to index
+
+  src 0 index string:substring { comment }
+
+  src index comment
+;
+
+: parse-word-name
+  { src index }
+
+  \ skip newline and comma after comment line
+  index 2 + to index
+
+  src index src string:length @ string:substring to src
+
+  \ find index of space or newline
+  src 32 string:from-char string:index-of { index1 }
+  src 10 string:from-char string:index-of { index2 }
+
+  \ use nearest
+  index1 index2 min to index
+
+  src 0 index 1+ string:substring { word-name }
+
+  src index word-name
+;
+
+: parse-stack-effect
+  { src index }
+
+  index 1 + to index
+
+  \ if not "(" then exit early
+  src index string:nth 40 <> if src index s" " string:make exit then
+
+  src index src string:length @ string:substring to src
+
+  src 41 string:from-char string:index-of 2 + to index
+  
+  src 0 index string:substring { stack-effect }
+
+  src index stack-effect
+;
+
 : doc-render 
   ['] doc-render-item over list:for-each ;
+
+: parse-words
+  { src word-list }
+
+  begin
+    src find-docgen-marker { index }
+
+    index -1 <>
+  while
+    \ skip over the marker
+    index docgen-marker string:length @ + to index
+
+    src index parse-comment { comment } to index to src
+
+    src index parse-word-name { word-name } to index to src
+
+    src index parse-stack-effect { stack-effect } to index to src
+
+    word-name comment stack-effect doc-make { doc }
+
+    word-list doc list:append
+  repeat
+;
 
 : docgen
   load-file
@@ -45,39 +133,7 @@ variable #src
 
   list:make { word-list }
 
-  begin
-    src docgen-marker string:index-of { index }
-
-    index -1 <>
-  while
-    index docgen-marker string:length @ + to index
-
-    src index src string:length @ string:substring to src
-
-    src 10 string:from-char string:index-of { end }
-
-    src 0 end 1+ string:substring { comment }
-
-    index end 3 + to index
-
-    src index src string:length @ string:substring to src
-
-    src 32 string:from-char string:index-of { end1 }
-    src 10 string:from-char string:index-of { end2 }
-
-    end1 end2 min to end
-
-    src 0 end 1+ string:substring { word-name }
-
-    doc-make { doc }
-
-    word-name doc doc:word !
-    comment doc doc:comment !
-
-    word-list doc list:append
-
-    index 1+ to index
-  repeat
+  src word-list parse-words
 
   word-list doc-render
 ;

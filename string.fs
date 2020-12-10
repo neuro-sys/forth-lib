@@ -7,19 +7,19 @@ vector:struct constant string:struct
 : string:data       vector:data ;
 : string:length     vector:length ;
 
-\ ( string -- caddr u ) return counted string from string
-: string:raw 
+\ return counted string from string
+: string:raw ( string -- caddr u )
   { string }
 
   string string:data @
   string string:length @
 ;
 
-\ ( string -- caddr ) return caddr from string
-: string:caddr string:raw drop ;
+\ return caddr from string
+: string:caddr ( string -- caddr ) string:raw drop ;
 
-\ ( caddr u -- string ) make a string from the string at counted string
-: string:make
+\ make a string from the string at counted string
+: string:make ( caddr u -- string )
   { caddr u }
 
   u 1 chars vector:make { string }
@@ -32,8 +32,8 @@ vector:struct constant string:struct
   string
 ;
 
-\ ( string -- u ) convert string into number
-: string:to-number
+\ convert string into number
+: string:to-number ( string -- u )
   { string }
 
   string string:data @ { caddr }
@@ -44,8 +44,8 @@ vector:struct constant string:struct
   ud0 ud1
 ;
 
-\ ( string -- ) print string
-: string:print
+\ print string
+: string:print ( string -- )
   { string }
 
   string string:data @
@@ -53,8 +53,8 @@ vector:struct constant string:struct
   type
 ;
 
-\ ( d string -- tokens ) tokenize string delimited by d into list of tokens
-: string:tokenize
+\ tokenize string delimited by d into list of tokens
+: string:tokenize ( d string -- tokens )
   { d string }
 
   string string:data @   { caddr }
@@ -87,15 +87,15 @@ vector:struct constant string:struct
   tokens
 ;
 
-\ ( string n -- c ) return nth character in string
-: string:nth
+\ return nth character in string
+: string:nth ( string n -- c )
   { string n }
 
   string string:data @ n + c@
 ;
 
-\ ( string acc xt -- acc ) execute xt on every node accumulating result in acc. xt is called with ( acc char -- acc )
-: string:reduce
+\ execute xt on every node accumulating result in acc. xt is called with ( acc char -- acc )
+: string:reduce ( string acc xt -- acc )
   { string acc xt }
 
   string string:length @ 0 ?do
@@ -106,8 +106,8 @@ vector:struct constant string:struct
   acc
 ;
 
-\ ( string xt -- t ) execute xt on every node and return true if at least one returns true
-: string:some
+\ execute xt on every node and return true if at least one returns true
+: string:some ( string xt -- t )
   { string xt }
 
   false { some? }
@@ -123,8 +123,8 @@ vector:struct constant string:struct
   some?
 ;
 
-\ ( string xt -- t ) execute xt on every node and return true if all returns true
-: string:every
+\ execute xt on every node and return true if all returns true
+: string:every ( string xt -- t )
   { string xt }
 
   true { every? }
@@ -140,8 +140,8 @@ vector:struct constant string:struct
   every?
 ;
 
-\ ( string1 string2 -- string3 ) append string2 to string1 and return string3
-: string:append
+\ append string2 to string1 and return string3
+: string:append ( string1 string2 -- string3 )
   { string1 string2 }
 
   string1 string:length @
@@ -163,8 +163,8 @@ vector:struct constant string:struct
   string3
 ;
 
-\ ( string1 string2 -- t ) compare string1 with string2 and return boolean
-: string:compare
+\ compare string1 with string2 and return boolean
+: string:compare ( string1 string2 -- t )
   { string1 string2 }
 
   true { equal? }
@@ -180,8 +180,8 @@ vector:struct constant string:struct
   equal?
 ;
 
-\ ( c -- string ) make string for char
-: string:from-char
+\ make string for char
+: string:from-char ( c -- string )
   { c }
 
   s"  " string:make { string }
@@ -191,8 +191,8 @@ vector:struct constant string:struct
   string
 ;
 
-\ ( string1 a b -- string2 ) exctract string2 from string1 with offsets [a,b) (FIXME)
-: string:substring
+\ exctract string2 from string1 with offsets [a,b) (FIXME)
+: string:substring ( string1 a b -- string2 )
   { string1 a b }
 
   \ FIXME: handle reverse indices
@@ -212,8 +212,8 @@ vector:struct constant string:struct
   string2
 ;
 
-\ ( string1 string2 -- b ) return the index of string2 within string1 otherwise -1
-: string:index-of
+\ return the index of string2 within string1 otherwise -1
+: string:index-of ( string1 string2 -- b )
   { string1 string2 }
 
   -1 { index }
@@ -229,8 +229,8 @@ vector:struct constant string:struct
   index
 ;
 
-\ ( string1 string2 string3 -- string4 ) replace string2 in string1 with string3 and return string4
-: string:replace
+\ replace string2 in string1 with string3 and return string4
+: string:replace ( string1 string2 string3 -- string4 )
   { string1 string2 string3 }
 
   string1 string:length @
@@ -256,8 +256,8 @@ vector:struct constant string:struct
   string4
 ;
 
-\ ( string1 string2 -- t ) returns true if string1 ends with string2
-: string:ends-with
+\ returns true if string1 ends with string2
+: string:ends-with ( string1 string2 -- t )
   { string1 string2 }
 
   string1 string:length @

@@ -11,8 +11,8 @@ begin-structure list:struct
   field: list:head
 end-structure
 
-\ ( -- list ) allot new list object
-: list:make
+\ allot new list object
+: list:make ( -- list )
   here { list }
 
   list:struct allot
@@ -22,8 +22,8 @@ end-structure
   list
 ;
 
-\ ( data -- node ) allot new node and set data to u
-: list:node:make
+\ allot new node and set data to u
+: list:node:make ( data -- node )
   { data }
 
   here { node }
@@ -36,8 +36,8 @@ end-structure
   node
 ;
 
-\ ( list data -- list ) allot new node with data and append to list return list
-: list:append
+\ allot new node with data and append to list return list
+: list:append ( list data -- list )
   { list data }
 
   data list:node:make { node }
@@ -57,8 +57,8 @@ end-structure
   list
 ;
 
-\ ( xt list -- ) execute xt on every element of list
-: list:for-each
+\ execute xt on every element of list
+: list:for-each ( xt list -- )
   { xt list }
   list list:tail @ { iter }
 
@@ -70,8 +70,8 @@ end-structure
   repeat
 ;
 
-\ ( list1 xt -- list2 ) execute xt on every element of list1 and create a new list2 and return
-: list:map
+\ execute xt on every element of list1 and create a new list2 and return
+: list:map ( list1 xt -- list2 )
   { list1 xt }
 
   list1 list:tail @ { iter }
@@ -88,8 +88,8 @@ end-structure
   list2
 ;
 
-\ ( list -- n ) return list length
-: list:length
+\ return list length
+: list:length ( list -- n )
   { list }
 
   0 { n }
@@ -106,8 +106,8 @@ end-structure
   n
 ;
 
-\ ( list n -- data ) return the nth data from list
-: list:nth
+\ return the nth data from list
+: list:nth ( list n -- data )
   { list n }
   0 { k }
 
@@ -123,8 +123,8 @@ end-structure
   iter list:node:data @
 ;
 
-\ ( list acc xt -- acc ) apply func xt on every element accumulating result in acc. xt is called with ( acc element -- acc )
-: list:reduce
+\ apply func xt on every element accumulating result in acc. xt is called with ( acc element -- acc )
+: list:reduce ( list acc xt -- acc )
   { list acc xt }
 
   list list:tail @ { iter }
@@ -139,8 +139,8 @@ end-structure
   acc
 ;
 
-\ ( list xt -- t ) execute xt on every node and return true if at least one returns true. xt is called with ( element -- t )
-: list:some
+\ execute xt on every node and return true if at least one returns true. xt is called with ( element -- t )
+: list:some ( list xt -- t )
   { list xt }
 
   false { some? }
