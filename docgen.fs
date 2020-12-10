@@ -25,17 +25,11 @@ variable #src
 \ returns a string marking the beginning of a docgen item; newline followed by a "\" character.
 : docgen-marker s\" \n\\ " string:make ;
 
-: doc-make
-  { word-name comment stack-effect }
+: doc-allot here doc:struct allot ;
 
-  here doc:struct allot { doc }
-
-  word-name doc doc:word !
-  comment doc doc:comment !
-  stack-effect doc doc:stack-effect !
-
-  doc
-;
+\ Make a doc:struct from the provided word-name, comment and stack-effect
+: doc-make ( word-name comment stack-effect -- doc )
+  doc-allot dup >r doc:stack-effect ! r@ doc:comment ! r@ doc:word ! r> ;
 
 \ Takes a doc:struct and prints it in markdown
 : doc-render-item ( doc -- )
@@ -45,10 +39,8 @@ variable #src
   doc:comment @ string:print cr cr
 ;
 
-: find-docgen-marker ( src -- index )
-  { src }
-  src docgen-marker string:index-of
-;
+\ return the index of docgen marker from the given source string
+: find-docgen-marker ( src -- index ) docgen-marker string:index-of ;
 
 : parse-comment
   { src index }
