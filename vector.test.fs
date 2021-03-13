@@ -11,5 +11,3 @@ require vector.fs
 ;
 
 42 1 chars vector:create vector-debug
-
-bye

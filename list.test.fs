@@ -42,5 +42,3 @@ require list.fs
 run-test
 
 ---marker---
-
-bye
