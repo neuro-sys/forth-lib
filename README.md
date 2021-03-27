@@ -1,4 +1,4 @@
-# forth-libs
+# forth-lib
 
 Collection of words to help with writing high level applications with
 Forth language. The source code here is tested using
