@@ -1,5 +1,3 @@
-marker ---marker---
-
 ( argv0 ) constant input-file
 
 require string.fs
@@ -23,7 +21,7 @@ variable #src
 : close      fd @ close-file throw ;
 : start      here src ! ;
 : finish     here src @ - #src ! ;
-: load-file  open start read finish close ;
+: load-file  open start read finish close src @ #src @ ;
 
 \ returns a string marking the beginning of a docgen item; newline followed by a "\" character.
 : docgen-marker s\" \n\\ " string:create ;
@@ -45,96 +43,109 @@ variable #src
 \ return the index of docgen marker from the given source string
 : find-docgen-marker ( src -- index ) docgen-marker string:index-of ;
 
+variable src
+variable index
 : parse-comment
-  { src index }
+  index ! src !
 
-  src index src string:length + @ string:substring to src
+  src @ index @ src @ string:length + @ string:substring src !
 
   \ find index of char after newline
-  src 10 string:from-char string:index-of 1+ to index
+  src @ 10 string:from-char string:index-of 1+ index !
 
-  src 0 index string:substring { comment }
-
-  src index comment
+  src @ index @
+  src @ 0 index @ string:substring
 ;
 
+variable src
+variable index
+variable index1
+variable index2
 : parse-word-name
-  { src index }
+  index ! src !
 
   \ skip newline and comma after comment line
-  index 2 + to index
+  index @ 2 + index !
 
-  src index src string:length + @ string:substring to src
+  src @ index @ src @ string:length + @ string:substring src !
 
   \ find index of space or newline
-  src 32 string:from-char string:index-of { index1 }
-  src 10 string:from-char string:index-of { index2 }
+  src @ 32 string:from-char string:index-of index1 !
+  src @ 10 string:from-char string:index-of index2 !
 
   \ use nearest
-  index1 index2 min to index
+  index1 @ index2 @ min index !
 
-  src 0 index 1+ string:substring { word-name }
-
-  src index word-name
+  src @ index @
+  src @ 0 index @ 1+ string:substring
 ;
 
+variable src
+variable index
 : parse-stack-effect
-  { src index }
+  index ! src !
 
-  index 1 + to index
+  index @ 1+ index !
 
   \ if not "(" then exit early
-  src index string:nth 40 <> if src index s" " string:create exit then
+  src @ index @ string:nth 40 <> if src @ index @ s" " string:create exit then
 
-  src index src string:length + @ string:substring to src
+  src @ index @ src @ string:length + @ string:substring src !
 
-  src 41 string:from-char string:index-of 2 + to index
-  
-  src 0 index string:substring { stack-effect }
+  src @ 41 string:from-char string:index-of 2 + index !
 
-  src index stack-effect
+  src @ index @
+  src @ 0 index @ string:substring
 ;
 
 : doc-render 
   ['] doc-render-item over list:for-each ;
 
+variable src
+variable word-list
+variable index
+variable comment
+variable word-name
+variable stack-effect
+variable doc
 : parse-words
-  { src word-list }
+  word-list ! src !
 
   begin
-    src find-docgen-marker { index }
+    src @ find-docgen-marker index !
 
-    index -1 <>
+    index @ -1 <>
   while
     \ skip over the marker
-    index docgen-marker string:length + @ + to index
+    index @ docgen-marker string:length + @ + index !
 
-    src index parse-comment { comment } to index to src
+    src @ index @ parse-comment comment ! index ! src !
 
-    src index parse-word-name { word-name } to index to src
+    src @ index @ parse-word-name word-name ! index ! src !
 
-    src index parse-stack-effect { stack-effect } to index to src
+    src @ index @ parse-stack-effect stack-effect ! index ! src !
 
-    word-name comment stack-effect doc-make { doc }
+    word-name @ comment @ stack-effect @ doc-make doc !
 
-    word-list doc list:append
+    word-list @ doc @ list:append
   repeat
 ;
 
+variable src
+variable #src
+variable word-list
 : docgen
-  load-file
+  load-file #src ! src !
 
-  src @ #src @ string:create { src }
+  src @ #src @ string:create src !
 
-  list:create { word-list }
+  list:create word-list !
 
-  src word-list parse-words
+  src @ word-list @ parse-words
 
-  word-list doc-render
+  word-list @ doc-render @
 ;
 
 docgen
-
----marker---
 
 bye

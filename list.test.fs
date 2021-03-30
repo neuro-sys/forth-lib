@@ -1,5 +1,3 @@
-marker ---marker---
-
 require list.fs
 
 also list.fs
@@ -42,5 +40,3 @@ variable list1
 ;
 
 run-test
-
----marker---

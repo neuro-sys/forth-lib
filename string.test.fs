@@ -1,5 +1,3 @@
-marker ---marker---
-
 require string.fs
 require list.fs
 
@@ -130,5 +128,3 @@ variable tokens
 ;
 
 run-test
-
----marker---
