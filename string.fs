@@ -15,10 +15,9 @@ constant string:struct
 
 \ return counted string from string
 : string:raw ( string -- caddr u )
-  { string }
-
-  string string:data + @
-  string string:length + @
+  >r
+  r@ string:data + @
+  r> string:length + @
 ;
 
 \ return caddr from string
@@ -26,117 +25,119 @@ constant string:struct
 
 \ make a string from the string at counted string
 : string:create ( caddr u -- string )
-  { caddr u }
-
-  here { string }
+  here >r ( caddr u ) ( R: string )
 
   string:struct allot
 
-  u string string:length + !
+  dup r@ string:length + !
 
-  here { data }
+  here ( caddr u data )
 
-  u allot
+  over allot
 
-  data string string:data + !
+  r@ string:data + ! ( caddr u )
 
-  caddr
-    string string:data + @
-    u
+  r@ string:data + @
+  swap
   cmove
 
-  string
+  r>
 ;
 
 \ convert string into number
 : string:to-number ( string -- u )
-  { string }
+  >r
+  r@ string:data + @ ( caddr )
+  r> string:length + @ ( caddr len )
 
-  string string:data + @ { caddr }
-  string string:length + @ { len }
+  0 0 2swap >number ( ud0 ud1 u1 u2 )
 
-  0 0 caddr len >number { ud0 ud1 u1 u2 }
-
-  ud0 ud1
+  drop nip
 ;
 
 \ print string
 : string:print ( string -- )
-  { string }
-
-  string string:data + @
-  string string:length + @
-  type
+  >r
+  r@ string:data + @
+  r@ string:length + @
+  type rdrop
 ;
 
+
+variable d
+variable string
+variable caddr
+variable prev-caddr
+variable tokens
+variable k
 \ tokenize string delimited by d into list of tokens
 : string:tokenize ( d string -- tokens )
-  { d string }
+  string ! d !
 
-  string string:data + @   { caddr }
-  string string:data + @   { prev-caddr }
-  list:create             { tokens }
-  0                     { k }
+  string @ string:data + @   caddr !
+  string @ string:data + @   prev-caddr !
+  list:create                tokens !
+  0                          k !
 
   \ When current character equals the delimiter, push a string
   \ denoting the last caddr and current index k. Also set k to i and
   \ set prev caddr to _caddr.
 
-  string string:length + @ 0 ?do
-    caddr c@ d = if
-      tokens
-        prev-caddr k string:create
-      list:append to tokens
+  string @ string:length + @ 0 ?do
+    caddr @ c@ d @ = if
+      tokens @
+        prev-caddr @ k @ string:create
+      list:append tokens !
 
-      caddr 1+ to prev-caddr
-      -1 to k
+      caddr @ 1+ prev-caddr !
+      -1 k !
     then
 
-    k 1+ to k
-    caddr 1+ to caddr
+    k @ 1+ k !
+    caddr @ 1+ caddr !
   loop
 
-  tokens
-    prev-caddr k string:create
-  list:append to tokens
+  tokens @
+    prev-caddr @ k @ string:create
+  list:append tokens !
 
-  tokens
+  tokens @
 ;
 
 \ return nth character in string
 : string:nth ( string n -- c )
-  { string n }
-
-  string string:data + @ n + c@
+  swap
+  string:data + @ + c@
 ;
 
 \ execute xt on every node accumulating result in acc. xt is called with ( acc char -- acc )
 : string:reduce ( string acc xt -- acc )
-  { string acc xt }
+  rot ( acc xt string )
 
-  string string:length + @ 0 ?do
-    string string:data + @ i + c@ { c }
-    acc c xt execute to acc
+  dup string:length + @ 0 ?do
+    dup string:data + @ i + c@ ( acc xt string c )
+    over >r nip
+    over >r nip swap r@ ( xt acc c ) execute r> r> ( acc )
   loop
-
-  acc
+  2drop
 ;
 
 \ execute xt on every node and return true if at least one returns true
 : string:some ( string xt -- t )
-  { string xt }
-
-  false { some? }
-
-  string string:length + @ 0 ?do
-    string string:data + @ i + c@ { c }
-    c xt execute if
-      true to some?
-      leave
+  swap ( xt string )
+  dup string:length + @ 0 ?do
+    dup string:data + @ i + c@ ( xt string c )
+    rot dup >r execute if
+      rdrop drop
+      true
+      unloop
+      exit
     then
+    r> swap
   loop
 
-  some?
+  2drop
+  false
 ;
 
 \ execute xt on every node and return true if all returns true
