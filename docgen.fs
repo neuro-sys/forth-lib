@@ -6,6 +6,7 @@ require string.fs
 require list.fs
 
 also list.fs
+also string.fs
 
 begin-structure doc:struct
   field: doc:word
@@ -47,7 +48,7 @@ variable #src
 : parse-comment
   { src index }
 
-  src index src string:length @ string:substring to src
+  src index src string:length + @ string:substring to src
 
   \ find index of char after newline
   src 10 string:from-char string:index-of 1+ to index
@@ -63,7 +64,7 @@ variable #src
   \ skip newline and comma after comment line
   index 2 + to index
 
-  src index src string:length @ string:substring to src
+  src index src string:length + @ string:substring to src
 
   \ find index of space or newline
   src 32 string:from-char string:index-of { index1 }
@@ -85,7 +86,7 @@ variable #src
   \ if not "(" then exit early
   src index string:nth 40 <> if src index s" " string:create exit then
 
-  src index src string:length @ string:substring to src
+  src index src string:length + @ string:substring to src
 
   src 41 string:from-char string:index-of 2 + to index
   
@@ -106,7 +107,7 @@ variable #src
     index -1 <>
   while
     \ skip over the marker
-    index docgen-marker string:length @ + to index
+    index docgen-marker string:length + @ + to index
 
     src index parse-comment { comment } to index to src
 

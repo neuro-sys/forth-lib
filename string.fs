@@ -6,10 +6,10 @@ require list.fs
 
 also list.fs
 
-begin-structure string:struct
-  field: string:length
-  field: string:data
-end-structure
+0
+dup constant string:length cell +
+dup constant string:data cell +
+constant string:struct
 
 : string:erase      string:struct erase ;
 
@@ -17,8 +17,8 @@ end-structure
 : string:raw ( string -- caddr u )
   { string }
 
-  string string:data @
-  string string:length @
+  string string:data + @
+  string string:length + @
 ;
 
 \ return caddr from string
@@ -32,16 +32,16 @@ end-structure
 
   string:struct allot
 
-  u string string:length !
+  u string string:length + !
 
   here { data }
 
   u allot
 
-  data string string:data !
+  data string string:data + !
 
   caddr
-    string string:data @
+    string string:data + @
     u
   cmove
 
@@ -52,8 +52,8 @@ end-structure
 : string:to-number ( string -- u )
   { string }
 
-  string string:data @ { caddr }
-  string string:length @ { len }
+  string string:data + @ { caddr }
+  string string:length + @ { len }
 
   0 0 caddr len >number { ud0 ud1 u1 u2 }
 
@@ -64,8 +64,8 @@ end-structure
 : string:print ( string -- )
   { string }
 
-  string string:data @
-  string string:length @
+  string string:data + @
+  string string:length + @
   type
 ;
 
@@ -73,8 +73,8 @@ end-structure
 : string:tokenize ( d string -- tokens )
   { d string }
 
-  string string:data @   { caddr }
-  string string:data @   { prev-caddr }
+  string string:data + @   { caddr }
+  string string:data + @   { prev-caddr }
   list:create             { tokens }
   0                     { k }
 
@@ -82,7 +82,7 @@ end-structure
   \ denoting the last caddr and current index k. Also set k to i and
   \ set prev caddr to _caddr.
 
-  string string:length @ 0 ?do
+  string string:length + @ 0 ?do
     caddr c@ d = if
       tokens
         prev-caddr k string:create
@@ -107,15 +107,15 @@ end-structure
 : string:nth ( string n -- c )
   { string n }
 
-  string string:data @ n + c@
+  string string:data + @ n + c@
 ;
 
 \ execute xt on every node accumulating result in acc. xt is called with ( acc char -- acc )
 : string:reduce ( string acc xt -- acc )
   { string acc xt }
 
-  string string:length @ 0 ?do
-    string string:data @ i + c@ { c }
+  string string:length + @ 0 ?do
+    string string:data + @ i + c@ { c }
     acc c xt execute to acc
   loop
 
@@ -128,8 +128,8 @@ end-structure
 
   false { some? }
 
-  string string:length @ 0 ?do
-    string string:data @ i + c@ { c }
+  string string:length + @ 0 ?do
+    string string:data + @ i + c@ { c }
     c xt execute if
       true to some?
       leave
@@ -145,8 +145,8 @@ end-structure
 
   true { every? }
 
-  string string:length @ 0 ?do
-    string string:data @ i + c@ { c }
+  string string:length + @ 0 ?do
+    string string:data + @ i + c@ { c }
     c xt execute invert if
       false to every?
       leave
@@ -160,20 +160,20 @@ end-structure
 : string:append ( string1 string2 -- string3 )
   { string1 string2 }
 
-  string1 string:length @
-  string2 string:length @ + { u }
+  string1 string:length + @
+  string2 string:length + @ + { u }
 
   here u string:create { string3 }
 
   string1 string:caddr
     string3 string:caddr
-    string1 string:length @
+    string1 string:length + @
   cmove
 
   string2 string:caddr
     string3 string:caddr
-      string1 string:length @ +
-    string2 string:length @
+      string1 string:length + @ +
+    string2 string:length + @
   cmove
 
   string3
@@ -185,10 +185,10 @@ end-structure
 
   true { equal? }
 
-  string1 string:length @
-  string2 string:length @ <> if false exit then
+  string1 string:length + @
+  string2 string:length + @ <> if false exit then
 
-  string1 string:length @ 0 ?do
+  string1 string:length + @ 0 ?do
     string1 i string:nth
     string2 i string:nth <> if false to equal? then
   loop
@@ -202,7 +202,7 @@ end-structure
 
   s"  " string:create { string }
 
-  c string string:data @ c!
+  c string string:data + @ c!
 
   string
 ;
@@ -218,7 +218,7 @@ end-structure
   here length string:create { string2 }
 
   length 0 ?do
-    i a + string1 string:length @ = if leave then
+    i a + string1 string:length + @ = if leave then
 
     string1 i a + string:nth { c }
 
@@ -249,8 +249,8 @@ end-structure
 : string:replace ( string1 string2 string3 -- string4 )
   { string1 string2 string3 }
 
-  string1 string:length @
-  string2 string:length @
+  string1 string:length + @
+  string2 string:length + @
   min { length }
 
   string1 string2 string:index-of { index }
@@ -276,17 +276,17 @@ end-structure
 : string:ends-with ( string1 string2 -- t )
   { string1 string2 }
 
-  string1 string:length @
-  string2 string:length @
+  string1 string:length + @
+  string2 string:length + @
   < if false exit then
 
-  string1 string:length @
-  string2 string:length @
+  string1 string:length + @
+  string2 string:length + @
   - { offset }
 
   string1 string:caddr offset + { string3-caddr }
 
-  string3-caddr string2 string:length @
+  string3-caddr string2 string:length + @
   string2 string:raw
   compare 0= if true exit then
 
