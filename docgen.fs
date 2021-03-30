@@ -8,21 +8,21 @@ require list.fs
 also list.fs
 also string.fs
 
-begin-structure doc:struct
-  field: doc:word
-  field: doc:comment
-  field: doc:stack-effect
-end-structure
+0
+dup constant doc:word cell +
+dup constant doc:comment cell +
+dup constant doc:stack-effect cell +
+constant doc:struct
 
-variable 'fd
-variable 'src
+variable fd
+variable src
 variable #src
 
-: read       begin here 4096 'fd @ read-file throw dup allot 0= until ;
-: open       input-file r/o open-file throw 'fd ! ;
-: close      'fd @ close-file throw ;
-: start      here 'src ! ;
-: finish     here 'src @ - #src ! ;
+: read       begin here 4096 fd @ read-file throw dup allot 0= until ;
+: open       input-file r/o open-file throw fd ! ;
+: close      fd @ close-file throw ;
+: start      here src ! ;
+: finish     here src @ - #src ! ;
 : load-file  open start read finish close ;
 
 \ returns a string marking the beginning of a docgen item; newline followed by a "\" character.
@@ -32,14 +32,14 @@ variable #src
 
 \ Make a doc:struct from the provided word-name, comment and stack-effect
 : doc-make ( word-name comment stack-effect -- doc )
-  doc-allot dup >r doc:stack-effect ! r@ doc:comment ! r@ doc:word ! r> ;
+  doc-allot dup >r doc:stack-effect + ! r@ doc:comment + ! r@ doc:word + ! r> ;
 
 \ Takes a doc:struct and prints it in markdown
 : doc-render-item ( doc -- )
-  ." ## `" dup doc:word @ string:print space
-           dup doc:stack-effect @ string:print ." `" cr
+  ." ## `" dup doc:word + @ string:print space
+           dup doc:stack-effect + @ string:print ." `" cr
 
-  doc:comment @ string:print cr cr
+  doc:comment + @ string:print cr cr
 ;
 
 \ return the index of docgen marker from the given source string
@@ -124,7 +124,7 @@ variable #src
 : docgen
   load-file
 
-  'src @ #src @ string:create { src }
+  src @ #src @ string:create { src }
 
   list:create { word-list }
 

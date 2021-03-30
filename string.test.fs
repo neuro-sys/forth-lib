@@ -7,12 +7,16 @@ also list.fs
 also string.fs
 
 : between ( a b c -- t )
-  { a b c }
-
-  a b >=
-  a c <= and ;
+  rot dup >r
+  swap <=
+  swap r> swap >=
+  and
+;
 
 : must-equal <> if abort" " else ." OK" then ;
+
+variable str
+variable tokens
 
 : run-test
   ." string:print -> "
@@ -22,9 +26,9 @@ also string.fs
   s" 123" string:create string:to-number drop 123 must-equal cr
 
   ." string:tokenize -> "
-  s" A,BC,DEF,GHIJ" string:create { str }
-  [char] , str string:tokenize { tokens }
-  tokens list:length 4 must-equal cr
+  s" A,BC,DEF,GHIJ" string:create str !
+  [char] , str @ string:tokenize tokens !
+  tokens @ list:length 4 must-equal cr
 
   ." string:for-each -> "
   tokens [: ." Token: " string:print space ;] swap list:for-each ." OK?" cr
