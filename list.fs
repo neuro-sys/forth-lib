@@ -1,163 +1,136 @@
-begin-structure list:node:struct
-  field: list:node:next
-  field: list:node:data
-end-structure
+[undefined] list.fs [if]
 
-: list:node:end?      list:node:next 0= ;
-: list:node:nend?     list:node:end? invert ;
+vocabulary list.fs also list.fs definitions
 
-begin-structure list:struct
-  field: list:tail
-  field: list:head
-end-structure
+0
+dup constant list:node:next cell +
+dup constant list:node:data cell +
+constant list:node:struct
+
+: list:node:end?      list:node:next + 0= ;
+: list:node:nend?     list:node:end? 0= ;
+
+0
+dup constant list:tail cell +
+dup constant list:head cell +
+constant list:struct
 
 \ allot new list object
 : list:create ( -- list )
-  here { list }
-
-  list:struct allot
-
-  list list:struct erase
-
-  list
+  here
+  dup list:struct allot
+      list:struct erase
 ;
 
 \ allot new node and set data to u
 : list:node:create ( data -- node )
-  { data }
-
-  here { node }
-
+  here dup >r
   list:node:struct allot
-
-  node list:node:struct erase
-  data node list:node:data !
-
-  node
+  dup list:node:struct erase
+  list:node:data + !
+  r>
 ;
 
 \ allot new node with data and append to list return list
 : list:append ( list data -- list )
-  { list data }
+  dup list:node:create dup >r
 
-  data list:node:create { node }
+  list:node:data + !
 
-  data node list:node:data !
-
-  list list:tail @ 0= if
-    node list list:tail !
+  dup list:tail + @ 0= if
+    r@ over list:tail + !
   then
 
-  list list:head @ 0<> if
-    node list list:head @ list:node:next !
+  dup list:head + @ 0<> if
+    r@ over list:head + @ list:node:next + !
   then
 
-  node list list:head !
-
-  list
+  r> over list:head + !
 ;
 
 \ execute xt on every element of list
 : list:for-each ( xt list -- )
-  { xt list }
-  list list:tail @ { iter }
+  list:tail + @ >r
 
   begin
-    iter list:node:nend?
+    r@ list:node:nend?
   while
-    iter list:node:data @ xt execute
-    iter list:node:next @ to iter
+    r@ list:node:data + @ over execute
+    r> list:node:next + @ >r
   repeat
+  rdrop drop
 ;
 
 \ execute xt on every element of list1 and create a new list2 and return
 : list:map ( list1 xt -- list2 )
-  { list1 xt }
-
-  list1 list:tail @ { iter }
-  list:create { list2 }
+  swap list:tail + @ >r
+  list:create ( xt list2 )
 
   begin
-    iter list:node:nend?
+    r@ list:node:nend?
   while
-    iter list:node:data @ xt execute { result }
-    list2 result list:append drop
-    iter list:node:next @ to iter
+    over r@ list:node:data + @ swap execute ( xt list2 result )
+    2dup list:append 2drop 
+    r> list:node:next + @ >r
   repeat
-
-  list2
+  rdrop nip
 ;
 
 \ return list length
 : list:length ( list -- n )
-  { list }
-
-  0 { n }
-
-  list list:tail @ { iter }
-
+  0
+  swap list:tail + @ >r
   begin
-    iter list:node:nend?
+    r@ list:node:nend?
   while
-    n 1+ to n
-    iter list:node:next @ to iter
+    1+
+    r> list:node:next + @ >r
   repeat
-
-  n
+  rdrop
 ;
 
 \ return the nth data from list
 : list:nth ( list n -- data )
-  { list n }
-  0 { k }
-
-  list list:tail @ { iter }
+  0
+  rot list:tail + @ >r
 
   begin
-    k n <>
+    2dup <>
   while
-    iter list:node:next @ to iter
-    k 1+ to k
+    r> list:node:next + @ >r
+    1+
   repeat
-
-  iter list:node:data @
+  2drop
+  r> list:node:data + @
 ;
 
 \ apply func xt on every element accumulating result in acc. xt is called with ( acc element -- acc )
 : list:reduce ( list acc xt -- acc )
-  { list acc xt }
-
-  list list:tail @ { iter }
+  rot list:tail + @ >r ( acc xt ) ( R: iter )
 
   begin
-    iter list:node:nend?
+    r@ list:node:nend?
   while
-    acc iter list:node:data @ xt execute to acc
-    iter list:node:next @ to iter
+    r@ list:node:data + @ swap dup >r execute r> ( acc xt )
+    r> list:node:next + @ >r
   repeat
-
-  acc
+  rdrop drop
 ;
 
 \ execute xt on every node and return true if at least one returns true. xt is called with ( element -- t )
 : list:some ( list xt -- t )
-  { list xt }
-
-  false { some? }
-
-  list list:tail @ { iter }
+  swap list:tail + @ >r ( xt ) ( R: iter )
 
   begin
-    iter list:node:nend?
+    r@ list:node:nend?
   while
-    iter list:node:data @ xt execute { result }
-
-    \ FIXME, exit early
-    result if
-      true to some?
-    then
-
-    iter list:node:next @ to iter
+    r@ list:node:data + @ over execute ( xt t )
+    0<> if rdrop drop true exit then
+    r> list:node:next + @ >r
   repeat
-  some?
+  rdrop false
 ;
+
+previous definitions
+
+[endif]

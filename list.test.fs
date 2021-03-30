@@ -2,6 +2,8 @@ marker ---marker---
 
 require list.fs
 
+also list.fs
+
 : must-equal <> if abort" " else ." OK " then ;
 
 : run-test

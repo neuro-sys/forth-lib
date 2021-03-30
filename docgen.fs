@@ -5,6 +5,8 @@ marker ---marker---
 require string.fs
 require list.fs
 
+also list.fs
+
 begin-structure doc:struct
   field: doc:word
   field: doc:comment

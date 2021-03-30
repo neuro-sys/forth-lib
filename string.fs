@@ -1,6 +1,8 @@
 require vector.fs
 require list.fs
 
+also list.fs
+
 vector:struct constant string:struct
 
 : string:erase      vector:erase ;
