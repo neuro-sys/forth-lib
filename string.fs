@@ -26,21 +26,14 @@ constant string:struct
 \ make a string from the string at counted string
 : string:create ( caddr u -- string )
   here >r ( caddr u ) ( R: string )
-
   string:struct allot
-
   dup r@ string:length + !
-
   here ( caddr u data )
-
   over allot
-
   r@ string:data + ! ( caddr u )
-
   r@ string:data + @
   swap
   cmove
-
   r>
 ;
 
@@ -49,9 +42,7 @@ constant string:struct
   >r
   r@ string:data + @ ( caddr )
   r> string:length + @ ( caddr len )
-
   0 0 2swap >number ( ud0 ud1 u1 u2 )
-
   drop nip
 ;
 
@@ -127,7 +118,7 @@ variable k
   swap ( xt string )
   dup string:length + @ 0 ?do
     dup string:data + @ i + c@ ( xt string c )
-    rot dup >r execute if
+    rot dup >r execute 0<> if
       rdrop drop
       true
       unloop
@@ -157,138 +148,163 @@ variable k
   every?
 ;
 
+variable string1
+variable string2
+variable string3
+variable u
 \ append string2 to string1 and return string3
 : string:append ( string1 string2 -- string3 )
-  { string1 string2 }
+  string2 ! string1 !
 
-  string1 string:length + @
-  string2 string:length + @ + { u }
+  string1 @ string:length + @
+  string2 @ string:length + @ + u !
 
-  here u string:create { string3 }
+  here u @ string:create string3 !
 
-  string1 string:caddr
-    string3 string:caddr
-    string1 string:length + @
+  string1 @ string:caddr
+    string3 @ string:caddr
+    string1 @ string:length + @
   cmove
 
-  string2 string:caddr
-    string3 string:caddr
-      string1 string:length + @ +
-    string2 string:length + @
+  string2 @ string:caddr
+    string3 @ string:caddr
+      string1 @ string:length + @ +
+    string2 @ string:length + @
   cmove
 
-  string3
+  string3 @
 ;
 
+variable string1
+variable string2
 \ compare string1 with string2 and return boolean
 : string:compare ( string1 string2 -- t )
-  { string1 string2 }
+  string2 ! string1 !
 
-  true { equal? }
+  string1 @ string:length + @
+  string2 @ string:length + @ <> if false exit then
 
-  string1 string:length + @
-  string2 string:length + @ <> if false exit then
-
-  string1 string:length + @ 0 ?do
-    string1 i string:nth
-    string2 i string:nth <> if false to equal? then
+  string1 @ string:length + @ 0 ?do
+    string1 @ i string:nth
+    string2 @ i string:nth <> if false unloop exit then
   loop
 
-  equal?
+  true
 ;
 
 \ make string for char
 : string:from-char ( c -- string )
-  { c }
+  s"  " string:create dup >r
 
-  s"  " string:create { string }
+  string:data + @ c!
 
-  c string string:data + @ c!
-
-  string
+  r>
 ;
 
+variable string1
+variable a
+variable b
+variable c
+variable length
 \ exctract string2 from string1 with offsets [a,b) (FIXME)
 : string:substring ( string1 a b -- string2 )
-  { string1 a b }
+  b ! a ! string1 !
 
   \ FIXME: handle reverse indices
-  b a < if ." Not implemented" abort then
+  b @ a @ < if ." Not implemented" abort then
 
-  b a - 1-                   { length }
-  here length string:create { string2 }
+  b @ a @ - 1-                length !
+  here length @ string:create string2 !
 
-  length 0 ?do
-    i a + string1 string:length + @ = if leave then
+  length @ 0 ?do
+    i a @ + string1 @ string:length + @ = if leave then
 
-    string1 i a + string:nth { c }
+    string1 @ i a @ + string:nth c !
 
-    c string2 string:caddr i + c!
+    c @ string2 @ string:caddr i + c!
   loop
 
-  string2
+  string2 @
 ;
 
+variable string1
+variable string2
+variable index
+variable caddr3
+variable u
+variable found
 \ return the index of string2 within string1 otherwise -1
 : string:index-of ( string1 string2 -- b )
-  { string1 string2 }
+  string2 ! string1 !
 
-  -1 { index }
+  -1 index !
 
-  string1 string:raw
-  string2 string:raw
-  search { c-addr3 u found }
+  string1 @ string:raw
+  string2 @ string:raw
+  search found ! u ! caddr3 !
 
-  found if
-    c-addr3 string1 string:caddr - to index
+  found @ if
+    caddr3 @ string1 @ string:caddr - index !
   then
 
-  index
+  index @
 ;
 
+variable string1
+variable string2
+variable string3
+variable string4
+variable length
+variable index
+variable first
+variable remaining
 \ replace string2 in string1 with string3 and return string4
 : string:replace ( string1 string2 string3 -- string4 )
-  { string1 string2 string3 }
+  string3 ! string2 ! string1 !
 
-  string1 string:length + @
-  string2 string:length + @
-  min { length }
+  string1 @ string:length + @
+  string2 @ string:length + @
+  min length !
 
-  string1 string2 string:index-of { index }
+  string1 @ string2 @ string:index-of index !
 
-  index -1 = if
-    string1 exit
+  index @ -1 = if
+    string1 @ exit
   then
 
-  string1 string:caddr index string:create { first }
+  string1 @ string:caddr index @ string:create first !
 
-  first string3 string:append { string4 }
+  first @ string3 @ string:append string4 !
 
-  string1 string:caddr index + length +
-  length index length - 1- -
-  string:create { remaining }
+  string1 @ string:caddr index @ + length @ +
+  length @ index @ length @ - 1- -
+  string:create remaining !
 
-  string4 remaining string:append to string4
+  string4 @ remaining @ string:append string4 !
 
-  string4
+  string4 @
 ;
 
+variable string1
+variable string2
+variable string3-caddr
+variable offset
 \ returns true if string1 ends with string2
 : string:ends-with ( string1 string2 -- t )
-  { string1 string2 }
+  string2 ! string1 !
 
-  string1 string:length + @
-  string2 string:length + @
+  string1 @ string:length + @
+  string2 @ string:length + @
   < if false exit then
 
-  string1 string:length + @
-  string2 string:length + @
-  - { offset }
+  string1 @ string:length + @
+  string2 @ string:length + @
+  - offset !
 
-  string1 string:caddr offset + { string3-caddr }
+  string1 @ string:caddr offset @ + string3-caddr !
 
-  string3-caddr string2 string:length + @
-  string2 string:raw
+  string3-caddr @ string2 @ string:length + @
+  string2 @ string:raw
   compare 0= if true exit then
 
   false
