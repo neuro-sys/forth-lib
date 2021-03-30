@@ -1,13 +1,17 @@
-require vector.fs
+[undefined] string.fs [if]
+
+vocabulary string.fs also string.fs definitions
+
 require list.fs
 
 also list.fs
 
-vector:struct constant string:struct
+begin-structure string:struct
+  field: string:length
+  field: string:data
+end-structure
 
-: string:erase      vector:erase ;
-: string:data       vector:data ;
-: string:length     vector:length ;
+: string:erase      string:struct erase ;
 
 \ return counted string from string
 : string:raw ( string -- caddr u )
@@ -24,7 +28,17 @@ vector:struct constant string:struct
 : string:create ( caddr u -- string )
   { caddr u }
 
-  u 1 chars vector:create { string }
+  here { string }
+
+  string:struct allot
+
+  u string string:length !
+
+  here { data }
+
+  u allot
+
+  data string string:data !
 
   caddr
     string string:data @
@@ -149,7 +163,7 @@ vector:struct constant string:struct
   string1 string:length @
   string2 string:length @ + { u }
 
-  u 1 chars vector:create { string3 }
+  here u string:create { string3 }
 
   string1 string:caddr
     string3 string:caddr
@@ -201,7 +215,7 @@ vector:struct constant string:struct
   b a < if ." Not implemented" abort then
 
   b a - 1-                   { length }
-  length 1 chars vector:create { string2 }
+  here length string:create { string2 }
 
   length 0 ?do
     i a + string1 string:length @ = if leave then
@@ -278,3 +292,7 @@ vector:struct constant string:struct
 
   false
 ;
+
+previous definitions
+
+[endif]
