@@ -84,22 +84,16 @@ variable src
 variable index
 : parse-stack-effect
   index ! src !
-
   index @ 1+ index !
-
   \ if not "(" then exit early
   src @ index @ string:nth 40 <> if src @ index @ s" " string:create exit then
-
   src @ index @ src @ string:length + @ string:substring src !
-
   src @ 41 string:from-char string:index-of 2 + index !
-
   src @ index @
   src @ 0 index @ string:substring
 ;
 
-: doc-render 
-  ['] doc-render-item over list:for-each ;
+: doc-render ['] doc-render-item over list:for-each ;
 
 variable src
 variable word-list
@@ -110,23 +104,16 @@ variable stack-effect
 variable doc
 : parse-words
   word-list ! src !
-
   begin
     src @ find-docgen-marker index !
-
     index @ -1 <>
   while
     \ skip over the marker
     index @ docgen-marker string:length + @ + index !
-
     src @ index @ parse-comment comment ! index ! src !
-
     src @ index @ parse-word-name word-name ! index ! src !
-
     src @ index @ parse-stack-effect stack-effect ! index ! src !
-
     word-name @ comment @ stack-effect @ doc-make doc !
-
     word-list @ doc @ list:append
   repeat
 ;
@@ -136,13 +123,9 @@ variable #src
 variable word-list
 : docgen
   load-file #src ! src !
-
   src @ #src @ string:create src !
-
   list:create word-list !
-
   src @ word-list @ parse-words
-
   word-list @ doc-render @
 ;
 

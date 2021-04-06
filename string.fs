@@ -133,19 +133,15 @@ variable k
 
 \ execute xt on every node and return true if all returns true
 : string:every ( string xt -- t )
-  { string xt }
-
-  true { every? }
-
-  string string:length + @ 0 ?do
-    string string:data + @ i + c@ { c }
-    c xt execute invert if
-      false to every?
-      leave
+  over string:length + @ 0 ?do
+    over string:data + @ i + c@ 
+    over execute invert if
+      false
+      unloop
+      exit
     then
   loop
-
-  every?
+  2drop true
 ;
 
 variable string1

@@ -121,10 +121,10 @@ variable tokens
   string:ends-with false must-equal cr
 
   ." string:reduce -> "
-  s" 123" string:create
+  s" 1234" string:create
   0
-  [: { acc char1 } char1 [char] 0 - acc + ;]
-  string:reduce 6 must-equal cr
+  [: [char] 0 - + ;]
+  string:reduce 10 must-equal cr
 ;
 
 run-test

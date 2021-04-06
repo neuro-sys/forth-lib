@@ -5,6 +5,7 @@ also list.fs
 : must-equal <> if abort" " else ." OK " then ;
 
 variable list1
+variable list2
 : run-test
   list:create list1 !
 
@@ -28,7 +29,7 @@ variable list1
   list1 @ list:length 6 must-equal cr
 
   ." list:map -> "
-  list1 @ [: 2 * ;] list:map { list2 }
+  list1 @ [: 2 * ;] list:map list2 !
   list2 list:length list1 @ list:length must-equal
   list2 0 list:nth list1 @ 0 list:nth 2 * must-equal
   list2 1 list:nth list1 @ 1 list:nth 2 * must-equal
