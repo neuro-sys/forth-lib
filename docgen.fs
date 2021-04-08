@@ -1,10 +1,13 @@
-( argv0 ) constant input-file
+( argv0 ) constant input-file-len
+( count ) constant input-file
 
 require string.fs
 require list.fs
+require fp.fs
 
 also list.fs
 also string.fs
+also fp.fs
 
 0
 dup constant doc:word cell +
@@ -17,7 +20,7 @@ variable src
 variable #src
 
 : read       begin here 4096 fd @ read-file throw dup allot 0= until ;
-: open       input-file r/o open-file throw fd ! ;
+: open       input-file input-file-len r/o open-file throw fd ! ;
 : close      fd @ close-file throw ;
 : start      here src ! ;
 : finish     here src @ - #src ! ;
@@ -32,9 +35,12 @@ variable #src
 : doc-make ( word-name comment stack-effect -- doc )
   doc-allot dup >r doc:stack-effect + ! r@ doc:comment + ! r@ doc:word + ! r> ;
 
+: doc-render-title ( caddr u -- )
+  ." ## require " input-file input-file-len 2dup type ."  also " type cr cr ;
+
 \ Takes a doc:struct and prints it in markdown
 : doc-render-item ( doc -- )
-  ." ## `" dup doc:word + @ string:print space
+  ." ### `" dup doc:word + @ string:print space
            dup doc:stack-effect + @ string:print ." `" cr
 
   doc:comment + @ string:print cr cr
@@ -93,7 +99,9 @@ variable index
   src @ 0 index @ string:substring
 ;
 
-: doc-render ['] doc-render-item over list:for-each ;
+: doc-render
+  doc-render-title
+  ['] doc-render-item over list:for-each ;
 
 variable src
 variable word-list
