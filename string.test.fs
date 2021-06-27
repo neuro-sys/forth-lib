@@ -18,7 +18,7 @@ variable tokens
 
 : run-test
   ." string:print -> "
-  s" Hello, world! " string:create string:print ." OK?" cr
+  s" Hello, world! " string:create string:print ." visually assert: Hello, world!" cr
 
   ." string:to-number -> "
   s" 123" string:create string:to-number drop 123 must-equal cr
@@ -29,7 +29,7 @@ variable tokens
   tokens @ list:length 4 must-equal cr
 
   ." string:for-each -> "
-  tokens @ [: ." Token: " string:print space ;] swap list:for-each ." OK?" cr
+  tokens @ [: ." Token: " string:print space ;] swap list:for-each ." visually assert: A,BC,DEF,GHIJ" cr
 
   ." string:nth -> "
   s" Hello, world" string:create 4 string:nth [char] o must-equal cr
@@ -56,10 +56,10 @@ variable tokens
   [char] x string:from-char s" x" string:create string:compare true must-equal cr
 
   ." string:substring -> "
-  s" foobar" string:create 2 6 string:substring s" oba" string:create string:compare true must-equal cr
+  s" aabbbb" string:create 2 6 string:substring s" bbbb" string:create string:compare true must-equal cr
 
   ." string:substring -> "
-  s" xxxddddddddddddddd" string:create 2 6 string:substring s" xdd" string:create string:compare true must-equal cr
+  s" aabbbbaaaaaaaaaaa" string:create 2 6 string:substring s" bbbb" string:create string:compare true must-equal cr
 
   ." string:index-of -> "
   s" foobar" string:create

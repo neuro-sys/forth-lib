@@ -202,15 +202,12 @@ variable a
 variable b
 variable c
 variable length
-\ exctract string2 from string1 with offsets [a,b) (FIXME)
+\ exctract string2 from string1 with offsets [a,b)
 : string:substring ( string1 a b -- string2 )
   b ! a ! string1 !
 
-  \ FIXME: handle reverse indices
-  b @ a @ < if ." Not implemented" abort then
-
-  b @ a @ - 1-                length !
-  here length @ string:create string2 !
+  b @ a @ -                    length  !
+  here length @ string:create  string2 !
 
   length @ 0 ?do
     i a @ + string1 @ string:length + @ = if leave then
