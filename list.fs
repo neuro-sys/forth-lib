@@ -14,6 +14,30 @@ dup constant list:tail cell +
 dup constant list:head cell +
 constant list:struct
 
+( list:node:struct                                             )
+( +-----------+        +-----------+        +-----------+      )
+( |   next    |------->|   next    |------->|   next    |--> 0 )
+( +-----------+        +-----------+        +-----------+      )
+( |   data    |        |   data    |        |   data    |      )
+( +-----------+        +-----------+        +-----------+      )
+(       ^---------+                               ^            )
+(                 |                               |            )
+( list:struct     |                               |            )
+( +-----------+   |                               |            )
+( |   tail    |<--+                               |            )
+( +-----------+                                   |            )
+( |   head    |<----------------------------------+            )
+( +-----------+                                                )
+
+: list:.node ( node -- )
+  hex
+  ." node: { "
+  dup list:node:next + @ .
+      list:node:data + @ .
+  ." } "
+  decimal
+;
+
 \ allot new list object
 : list:create ( -- list )
   here
@@ -45,15 +69,6 @@ constant list:struct
   then
 
   r> over list:head + !
-;
-
-: list:.node ( node -- )
-  hex
-  ." node: { "
-  dup list:node:next + @ .
-      list:node:data + @ .
-  ." } "
-  decimal
 ;
 
 \ execute xt on every element of list

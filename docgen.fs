@@ -1,3 +1,4 @@
+0 warnings !
 ( argv0 ) constant input-file-len
 ( count ) constant input-file
 
