@@ -17,7 +17,7 @@ variable list2
   list1 @ 6 list:append list1 !
 
   ." list:for-each -> "
-  [: . ;] list1 @ list:for-each ." OK?" cr
+  [: . ;] list1 @ list:for-each ." visually assert: 1 2 3 4 5 6" cr
 
   ." list:nth -> "
   list1 @ 2 list:nth 3 must-equal cr

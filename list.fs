@@ -7,8 +7,7 @@ dup constant list:node:next cell +
 dup constant list:node:data cell +
 constant list:node:struct
 
-: list:node:end?      list:node:next + 0= ;
-: list:node:nend?     list:node:end? 0= ;
+: list:node:nend?     list:node:next + @ 0<> ;
 
 0
 dup constant list:tail cell +
@@ -48,14 +47,23 @@ constant list:struct
   r> over list:head + !
 ;
 
+: list:.node ( node -- )
+  hex
+  ." node: { "
+  dup list:node:next + @ .
+      list:node:data + @ .
+  ." } "
+  decimal
+;
+
 \ execute xt on every element of list
 : list:for-each ( xt list -- )
   list:tail + @ >r
 
   begin
+    r@ list:node:data + @ over execute
     r@ list:node:nend?
   while
-    r@ list:node:data + @ over execute
     r> list:node:next + @ >r
   repeat
   rdrop drop
@@ -67,10 +75,10 @@ constant list:struct
   list:create ( xt list2 )
 
   begin
+    over r@ list:node:data + @ swap execute ( xt list2 result )
+    2dup list:append 2drop
     r@ list:node:nend?
   while
-    over r@ list:node:data + @ swap execute ( xt list2 result )
-    2dup list:append 2drop 
     r> list:node:next + @ >r
   repeat
   rdrop nip
@@ -80,10 +88,11 @@ constant list:struct
 : list:length ( list -- n )
   0
   swap list:tail + @ >r
+
   begin
+    1+
     r@ list:node:nend?
   while
-    1+
     r> list:node:next + @ >r
   repeat
   rdrop
@@ -108,10 +117,12 @@ constant list:struct
 : list:reduce ( list acc xt -- acc )
   rot list:tail + @ >r ( acc xt ) ( R: iter )
 
+  r@ 0= if rdrop drop exit then
+
   begin
+    r@ list:node:data + @ swap dup >r execute r> ( acc xt )
     r@ list:node:nend?
   while
-    r@ list:node:data + @ swap dup >r execute r> ( acc xt )
     r> list:node:next + @ >r
   repeat
   rdrop drop
