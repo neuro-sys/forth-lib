@@ -29,7 +29,7 @@ variable tokens
   tokens @ list:length 4 must-equal cr
 
   ." string:for-each -> "
-  tokens [: ." Token: " string:print space ;] swap list:for-each ." OK?" cr
+  tokens @ [: ." Token: " string:print space ;] swap list:for-each ." OK?" cr
 
   ." string:nth -> "
   s" Hello, world" string:create 4 string:nth [char] o must-equal cr
